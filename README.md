@@ -1,4 +1,4 @@
 FSK
 ===
 
-This is an iOS based signal generartor.
+This is an iOS based signal generator.
