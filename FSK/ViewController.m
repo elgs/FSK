@@ -92,8 +92,8 @@ void getBytes(const char* src, char* dst) {
         float phaseShiftInPi = [[[self phaseShiftInPi] text] floatValue];
         NSString* heading = [[self heading] text];
         NSString* tailing = [[self tailing] text];
-        printf("heading.length:%d\n",heading.length);
-        printf("tailing.length:%d\n",tailing.length);
+        //printf("heading.length:%d\n",heading.length);
+        //printf("tailing.length:%d\n",tailing.length);
         
 		int lowFreq = [[[self lowFreq] text] intValue];
         int lowSteps = sampleRate/lowFreq+1;
@@ -104,7 +104,7 @@ void getBytes(const char* src, char* dst) {
         int highSize =highSteps*sizeof(double);
         
         int lowHighSteps = lowSteps+highSteps;
-        printf("low steps:%d, high steps %d\n", lowSteps, highSteps);
+        //printf("low steps:%d, high steps %d\n", lowSteps, highSteps);
         
         double lowData[lowSteps];
         double highData[highSteps];
@@ -135,7 +135,7 @@ void getBytes(const char* src, char* dst) {
                 qSize+=highSteps;
             }
         }
-        printf("qSize:%d\n", qSize);
+        //printf("qSize:%d\n", qSize);
         dataQueue = (double*)malloc(sizeof(double)*qSize);
         opDq = dataQueue;
         
@@ -212,12 +212,12 @@ OSStatus RenderTone(
 	const int channel = 0;
 	Float32 *buffer = (Float32 *)ioData->mBuffers[channel].mData;
 	
-    printf("Start package.\n");
+    //printf("Start package.\n");
 	// Generate the samples
 	for (UInt32 frame = 0; frame < inNumberFrames; frame++)
 	{
 		buffer[frame] = *(viewController->opDq);
-        printf("qIndex:%d, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
+        //printf("qIndex:%d, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
         ++viewController->opDq;
         if(++viewController->qIndex >= viewController->qSize){
             //printf("qIndex end:%d\n", viewController->qIndex);
