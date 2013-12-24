@@ -67,6 +67,14 @@ void populateCircle(double* buf, int freq, int steps, float amplitude, float pha
     [alertHeading show];
 }
 
+void getBytes(const char* src, char* dst) {
+	for(int i=0;i<strlen(src);++i){
+		for(int j=0;j<8;++j){
+            dst[i*8+j] = (src[i]>>j)&1;
+		}
+	}
+}
+
 - (IBAction)sendData:(id)sender {
     if (toneUnit){
 		AudioOutputUnitStop(toneUnit);
@@ -104,7 +112,12 @@ void populateCircle(double* buf, int freq, int steps, float amplitude, float pha
         populateCircle(highData, highFreq, highSteps, amplitude, phaseShiftInPi);
         
         NSString* data = [[self data] text];
-        qSize = lowHighSteps*data.length;
+        const char* datac = [data UTF8String];
+        unsigned long dataLengthc = strlen(datac)*8;
+        char dataSignal[dataLengthc];
+        getBytes(datac, dataSignal);
+        
+        qSize = lowHighSteps*dataLengthc;
         for (int i=0; i<heading.length; ++i) {
             NSString* h = [heading substringWithRange:NSMakeRange(i, 1)];
             if([h isEqualToString:@"_"]) {
@@ -137,8 +150,8 @@ void populateCircle(double* buf, int freq, int steps, float amplitude, float pha
             }
         }
         
-        for (int i=0; i<data.length; ++i){
-            int d = [[data substringWithRange:NSMakeRange(i, 1)] intValue];
+        for (int i=0; i<dataLengthc; ++i){
+            int d = dataSignal[i];
             if(d==0){
                 memcpy(opDq, highData, highSize);
                 opDq+=highSteps;
