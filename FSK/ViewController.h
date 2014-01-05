@@ -15,6 +15,7 @@
     double* opDq;
     unsigned long qSteps;
     unsigned long qIndex;
+    int status;
 }
 
 @property (strong, nonatomic) IBOutlet UITextField* lowFreq;

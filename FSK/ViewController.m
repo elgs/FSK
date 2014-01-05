@@ -79,18 +79,18 @@ void getBitData(const char* bit, double* data, const double* lowData,int lowStep
     for(int i=0;i<strlen(bit);++i){
         char c = bit[i];
         if(c == '_'){
-            memcpy(data, lowData, lowSteps);
+            memcpy(data, lowData, lowSteps*sizeof(double));
             data+=lowSteps;
         }else if(c == '^'){
-            memcpy(data, highData, highSteps);
+            memcpy(data, highData, highSteps*sizeof(double));
             data+=highSteps;
         }
     }
 }
 
-unsigned long calcQSteps(const char* dst, unsigned long bit0Steps, unsigned long bit1Steps){
+unsigned long calcQSteps(const char* dst,unsigned long dstSize, unsigned long bit0Steps, unsigned long bit1Steps){
     unsigned long ret = 0;
-    for(int i=0;i<strlen(dst);++i){
+    for(int i=0;i<dstSize;++i){
         if(dst[i] == 0){
             ret += bit0Steps;
         }else if(dst[i] == 1){
@@ -115,7 +115,8 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
 
 - (IBAction)sendData:(id)sender {
     if (toneUnit){
-		AudioOutputUnitStop(toneUnit);
+		status = 0;
+        AudioOutputUnitStop(toneUnit);
 		AudioUnitUninitialize(toneUnit);
 		AudioComponentInstanceDispose(toneUnit);
 		toneUnit = nil;
@@ -125,6 +126,7 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
         }
 		[sender setTitle:NSLocalizedString(@"Send", nil) forState:0];
 	}else{
+        status = 1;
         qIndex = 0;
         float amplitude = [[self amplitude] value];
         float phaseShiftInPi = [[[self phaseShiftInPi] text] floatValue];
@@ -146,7 +148,7 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
         unsigned long bit0Steps = calcBitSteps(bit0, lowSteps, highSteps);
         unsigned long bit1Steps = calcBitSteps(bit1, lowSteps, highSteps);
         printf("bit0Steps: %lu\n",bit0Steps);
-        printf("bit1Steps: %lu\n",bit0Steps);
+        printf("bit1Steps: %lu\n",bit1Steps);
         
         double lowData[lowSteps];
         double highData[highSteps];
@@ -165,8 +167,7 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
         unsigned long dataLengthc = strlen(datac)*8;
         char dataSignal[dataLengthc];
         getBytes(datac, dataSignal);
-
-        qSteps = calcQSteps(dataSignal, bit0Steps, bit1Steps);
+        qSteps = calcQSteps(dataSignal,dataLengthc, bit0Steps, bit1Steps);
         printf("qSteps: %lu\n",qSteps);
         for (int i=0; i<heading.length; ++i) {
             NSString* h = [heading substringWithRange:NSMakeRange(i, 1)];
@@ -185,7 +186,7 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
                 qSteps+=highSteps;
             }
         }
-        //printf("qSize:%d\n", qSize);
+        printf("qSteps: %lu\n",qSteps);
         dataQueue = (double*)malloc(sizeof(double)*qSteps);
         opDq = dataQueue;
         
@@ -203,10 +204,10 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
         for (int i=0; i<dataLengthc; ++i){
             int d = dataSignal[i];
             if(d==0){
-                memcpy(opDq, bit0Data, bit0Steps);
+                memcpy(opDq, bit0Data, bit0Steps*sizeof(double));
                 opDq+=bit0Steps;
             }else{
-                memcpy(opDq, bit1Data, bit1Steps);
+                memcpy(opDq, bit1Data, bit1Steps*sizeof(double));
                 opDq+=bit1Steps;
             }
         }
@@ -262,13 +263,15 @@ OSStatus RenderTone(
 	// Generate the samples
 	for (UInt32 frame = 0; frame < inNumberFrames; frame++)
 	{
-		buffer[frame] = *(viewController->opDq);
-        //printf("qIndex:%d, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
-        ++viewController->opDq;
-        if(++viewController->qIndex >= viewController->qSteps){
-            //printf("qIndex end:%d\n", viewController->qIndex);
-            [viewController performSelectorOnMainThread:@selector(stop) withObject:nil waitUntilDone:NO];
-            break;
+        if(viewController->status){
+            buffer[frame] = *(viewController->opDq);
+            printf("qIndex:%lu, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
+            ++viewController->opDq;
+            if(++viewController->qIndex >= viewController->qSteps){
+                printf("qIndex end:%lu qSteps:%lu\n", viewController->qIndex, viewController->qSteps);
+                [viewController performSelectorOnMainThread:@selector(stop) withObject:nil waitUntilDone:NO];
+                break;
+            }
         }
 	}
     
@@ -285,7 +288,7 @@ OSStatus RenderTone(
             [NSThread sleepForTimeInterval:interval/1000];
             [self sendData:[self sendButton]];
         }
-    
+        
 	}
 }
 

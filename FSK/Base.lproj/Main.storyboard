@@ -99,7 +99,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1000" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wMW-g7-xrV">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="-1000" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wMW-g7-xrV">
                                 <rect key="frame" x="114" y="362" width="186" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -183,7 +183,6 @@
                     <connections>
                         <outlet property="amplitude" destination="bUt-Ta-ysq" id="P02-x7-lwr"/>
                         <outlet property="amplitudeValue" destination="yQG-LE-MBB" id="vXs-it-wgR"/>
-                        <outlet property="bi1" destination="34Y-0k-ptl" id="ohk-Qy-stx"/>
                         <outlet property="bit0" destination="RMF-xd-iST" id="hIO-pZ-RrJ"/>
                         <outlet property="bit1" destination="34Y-0k-ptl" id="A9c-SC-mrN"/>
                         <outlet property="data" destination="kfA-J2-Zvp" id="TDp-6n-DfC"/>
