@@ -147,8 +147,8 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
         
         unsigned long bit0Steps = calcBitSteps(bit0, lowSteps, highSteps);
         unsigned long bit1Steps = calcBitSteps(bit1, lowSteps, highSteps);
-        printf("bit0Steps: %lu\n",bit0Steps);
-        printf("bit1Steps: %lu\n",bit1Steps);
+        //printf("bit0Steps: %lu\n",bit0Steps);
+        //printf("bit1Steps: %lu\n",bit1Steps);
         
         double lowData[lowSteps];
         double highData[highSteps];
@@ -168,7 +168,7 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
         char dataSignal[dataLengthc];
         getBytes(datac, dataSignal);
         qSteps = calcQSteps(dataSignal,dataLengthc, bit0Steps, bit1Steps);
-        printf("qSteps: %lu\n",qSteps);
+        //printf("qSteps: %lu\n",qSteps);
         for (int i=0; i<heading.length; ++i) {
             NSString* h = [heading substringWithRange:NSMakeRange(i, 1)];
             if([h isEqualToString:@"_"]) {
@@ -186,7 +186,7 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
                 qSteps+=highSteps;
             }
         }
-        printf("qSteps: %lu\n",qSteps);
+        //printf("qSteps: %lu\n",qSteps);
         dataQueue = (double*)malloc(sizeof(double)*qSteps);
         opDq = dataQueue;
         
@@ -265,11 +265,12 @@ OSStatus RenderTone(
 	{
         if(viewController->status){
             buffer[frame] = *(viewController->opDq);
-            printf("qIndex:%lu, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
+            //printf("qIndex:%lu, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
             ++viewController->opDq;
             if(++viewController->qIndex >= viewController->qSteps){
-                printf("qIndex end:%lu qSteps:%lu\n", viewController->qIndex, viewController->qSteps);
+                //printf("qIndex end:%lu qSteps:%lu\n", viewController->qIndex, viewController->qSteps);
                 [viewController performSelectorOnMainThread:@selector(stop) withObject:nil waitUntilDone:NO];
+                viewController->status = 0;
                 break;
             }
         }
