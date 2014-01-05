@@ -67,12 +67,20 @@ void populateCircle(double* buf, int freq, int steps, float amplitude, float pha
     [alertHeading show];
 }
 
-void getBytes(const char* src, char* dst) {
-	for(int i=0;i<strlen(src);++i){
+int getBytes(const char* src, char* dst, int lowSteps, int highSteps) {
+	int steps = 0;
+    for(int i=0;i<strlen(src);++i){
 		for(int j=0;j<8;++j){
-            dst[i*8+j] = (src[i]>>j)&1;
+            int v = (src[i]>>j)&1;
+            dst[i*8+j] = v;
+            if(v==0){
+                steps+=lowSteps;
+            }else{
+                steps+=highSteps;
+            }
 		}
 	}
+    return steps;
 }
 
 - (IBAction)sendData:(id)sender {
@@ -90,6 +98,10 @@ void getBytes(const char* src, char* dst) {
         qIndex = 0;
         float amplitude = [[self amplitude] value];
         float phaseShiftInPi = [[[self phaseShiftInPi] text] floatValue];
+        NSString* bit0 = [[self bit0] text];
+        int bit0Length = bit0.length;
+        NSString* bit1 = [[self bit1] text];
+        int bit1Length = bit1.length;
         NSString* heading = [[self heading] text];
         NSString* tailing = [[self tailing] text];
         //printf("heading.length:%d\n",heading.length);
@@ -103,21 +115,20 @@ void getBytes(const char* src, char* dst) {
         int highSteps = sampleRate/highFreq+1;
         int highSize =highSteps*sizeof(double);
         
-        int lowHighSteps = lowSteps+highSteps;
-        //printf("low steps:%d, high steps %d\n", lowSteps, highSteps);
-        
         double lowData[lowSteps];
         double highData[highSteps];
         populateCircle(lowData, lowFreq, lowSteps, amplitude, phaseShiftInPi);
         populateCircle(highData, highFreq, highSteps, amplitude, phaseShiftInPi);
+        NSStringEncoding gbk = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
+        const char* datac = [[[self data] text] cStringUsingEncoding:gbk];
+        //const char* datac = [data UTF8String];
         
-        NSString* data = [[self data] text];
-        const char* datac = [data UTF8String];
         unsigned long dataLengthc = strlen(datac)*8;
+        printf("%lu\n", dataLengthc/8);
         char dataSignal[dataLengthc];
-        getBytes(datac, dataSignal);
+        int steps = getBytes(datac, dataSignal, lowSteps, highSteps);
         
-        qSize = lowHighSteps*dataLengthc;
+        qSize = steps*dataLengthc;
         for (int i=0; i<heading.length; ++i) {
             NSString* h = [heading substringWithRange:NSMakeRange(i, 1)];
             if([h isEqualToString:@"_"]) {

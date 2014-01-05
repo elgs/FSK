@@ -13,8 +13,8 @@
     AudioComponentInstance toneUnit;
     double* dataQueue;
     double* opDq;
-    int qSize;
-    int qIndex;
+    unsigned long qSize;
+    unsigned long qIndex;
 }
 
 @property (strong, nonatomic) IBOutlet UITextField* lowFreq;
@@ -22,6 +22,8 @@
 @property (strong, nonatomic) IBOutlet UITextField* data;
 @property (strong, nonatomic) IBOutlet UIButton *sendButton;
 @property (strong, nonatomic) IBOutlet UISlider *amplitude;
+@property (strong, nonatomic) IBOutlet UITextField *bit0;
+@property (strong, nonatomic) IBOutlet UITextField *bit1;
 @property (strong, nonatomic) IBOutlet UITextField *heading;
 @property (strong, nonatomic) IBOutlet UITextField *tailing;
 @property (strong, nonatomic) IBOutlet UILabel *amplitudeValue;
