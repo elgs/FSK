@@ -13,7 +13,7 @@
     AudioComponentInstance toneUnit;
     double* dataQueue;
     double* opDq;
-    unsigned long qSize;
+    unsigned long qSteps;
     unsigned long qIndex;
 }
 

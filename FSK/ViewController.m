@@ -67,20 +67,50 @@ void populateCircle(double* buf, int freq, int steps, float amplitude, float pha
     [alertHeading show];
 }
 
-int getBytes(const char* src, char* dst, int lowSteps, int highSteps) {
-	int steps = 0;
+void getBytes(const char* src, char* dst) {
     for(int i=0;i<strlen(src);++i){
-		for(int j=0;j<8;++j){
-            int v = (src[i]>>j)&1;
-            dst[i*8+j] = v;
-            if(v==0){
-                steps+=lowSteps;
-            }else{
-                steps+=highSteps;
-            }
-		}
-	}
-    return steps;
+        for(int j=0;j<8;++j){
+            dst[i*8+j] = (src[i]>>j)&1;
+        }
+    }
+}
+
+void getBitData(const char* bit, double* data, const double* lowData,int lowSteps, const double* highData, int highSteps){
+    for(int i=0;i<strlen(bit);++i){
+        char c = bit[i];
+        if(c == '_'){
+            memcpy(data, lowData, lowSteps);
+            data+=lowSteps;
+        }else if(c == '^'){
+            memcpy(data, highData, highSteps);
+            data+=highSteps;
+        }
+    }
+}
+
+unsigned long calcQSteps(const char* dst, unsigned long bit0Steps, unsigned long bit1Steps){
+    unsigned long ret = 0;
+    for(int i=0;i<strlen(dst);++i){
+        if(dst[i] == 0){
+            ret += bit0Steps;
+        }else if(dst[i] == 1){
+            ret += bit1Steps;
+        }
+    }
+    return ret;
+}
+
+unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
+    unsigned long ret = 0;
+    for(int i=0;i<strlen(bit);++i){
+        char c = bit[i];
+        if(c == '_'){
+            ret+=lowSteps;
+        }else if(c == '^'){
+            ret+=highSteps;
+        }
+    }
+    return ret;
 }
 
 - (IBAction)sendData:(id)sender {
@@ -98,56 +128,65 @@ int getBytes(const char* src, char* dst, int lowSteps, int highSteps) {
         qIndex = 0;
         float amplitude = [[self amplitude] value];
         float phaseShiftInPi = [[[self phaseShiftInPi] text] floatValue];
-        NSString* bit0 = [[self bit0] text];
-        int bit0Length = bit0.length;
-        NSString* bit1 = [[self bit1] text];
-        int bit1Length = bit1.length;
+        const char* bit0 = [[[self bit0] text] UTF8String];
+        const char* bit1 = [[[self bit1] text] UTF8String];
         NSString* heading = [[self heading] text];
         NSString* tailing = [[self tailing] text];
         //printf("heading.length:%d\n",heading.length);
         //printf("tailing.length:%d\n",tailing.length);
         
 		int lowFreq = [[[self lowFreq] text] intValue];
-        int lowSteps = sampleRate/lowFreq+1;
+        int lowSteps = round(sampleRate/lowFreq);
         int lowSize =lowSteps*sizeof(double);
         
         int highFreq = [[[self highFreq] text] intValue];
-        int highSteps = sampleRate/highFreq+1;
+        int highSteps = round(sampleRate/highFreq);
         int highSize =highSteps*sizeof(double);
+        
+        unsigned long bit0Steps = calcBitSteps(bit0, lowSteps, highSteps);
+        unsigned long bit1Steps = calcBitSteps(bit1, lowSteps, highSteps);
+        printf("bit0Steps: %lu\n",bit0Steps);
+        printf("bit1Steps: %lu\n",bit0Steps);
         
         double lowData[lowSteps];
         double highData[highSteps];
         populateCircle(lowData, lowFreq, lowSteps, amplitude, phaseShiftInPi);
         populateCircle(highData, highFreq, highSteps, amplitude, phaseShiftInPi);
+        
+        double bit0Data[bit0Steps];
+        double bit1Data[bit1Steps];
+        getBitData(bit0, bit0Data, lowData, lowSteps, highData, highSteps);
+        getBitData(bit1, bit1Data, lowData, lowSteps, highData, highSteps);
+        
         NSStringEncoding gbk = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
         const char* datac = [[[self data] text] cStringUsingEncoding:gbk];
         //const char* datac = [data UTF8String];
         
         unsigned long dataLengthc = strlen(datac)*8;
-        printf("%lu\n", dataLengthc/8);
         char dataSignal[dataLengthc];
-        int steps = getBytes(datac, dataSignal, lowSteps, highSteps);
-        
-        qSize = steps*dataLengthc;
+        getBytes(datac, dataSignal);
+
+        qSteps = calcQSteps(dataSignal, bit0Steps, bit1Steps);
+        printf("qSteps: %lu\n",qSteps);
         for (int i=0; i<heading.length; ++i) {
             NSString* h = [heading substringWithRange:NSMakeRange(i, 1)];
             if([h isEqualToString:@"_"]) {
-                qSize+=lowSteps;
+                qSteps+=lowSteps;
             } else if([h isEqualToString:@"^"]) {
-                qSize+=highSteps;
+                qSteps+=highSteps;
             }
         }
         
         for (int i=0; i<tailing.length; ++i) {
             NSString* t = [tailing substringWithRange:NSMakeRange(i, 1)];
             if([t isEqualToString:@"_"]) {
-                qSize+=lowSteps;
+                qSteps+=lowSteps;
             } else if([t isEqualToString:@"^"]) {
-                qSize+=highSteps;
+                qSteps+=highSteps;
             }
         }
         //printf("qSize:%d\n", qSize);
-        dataQueue = (double*)malloc(sizeof(double)*qSize);
+        dataQueue = (double*)malloc(sizeof(double)*qSteps);
         opDq = dataQueue;
         
         for (int i=0; i<heading.length; ++i) {
@@ -164,15 +203,11 @@ int getBytes(const char* src, char* dst, int lowSteps, int highSteps) {
         for (int i=0; i<dataLengthc; ++i){
             int d = dataSignal[i];
             if(d==0){
-                memcpy(opDq, highData, highSize);
-                opDq+=highSteps;
-                memcpy(opDq, lowData, lowSize);
-                opDq+=lowSteps;
+                memcpy(opDq, bit0Data, bit0Steps);
+                opDq+=bit0Steps;
             }else{
-                memcpy(opDq, lowData, lowSize);
-                opDq+=lowSteps;
-                memcpy(opDq, highData, highSize);
-                opDq+=highSteps;
+                memcpy(opDq, bit1Data, bit1Steps);
+                opDq+=bit1Steps;
             }
         }
         
@@ -230,7 +265,7 @@ OSStatus RenderTone(
 		buffer[frame] = *(viewController->opDq);
         //printf("qIndex:%d, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
         ++viewController->opDq;
-        if(++viewController->qIndex >= viewController->qSize){
+        if(++viewController->qIndex >= viewController->qSteps){
             //printf("qIndex end:%d\n", viewController->qIndex);
             [viewController performSelectorOnMainThread:@selector(stop) withObject:nil waitUntilDone:NO];
             break;
