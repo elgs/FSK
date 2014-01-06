@@ -20,7 +20,7 @@
 
 @property (strong, nonatomic) IBOutlet UITextField* lowFreq;
 @property (strong, nonatomic) IBOutlet UITextField* highFreq;
-@property (strong, nonatomic) IBOutlet UITextField* data;
+@property (strong, nonatomic) IBOutlet UITextView *data;
 @property (strong, nonatomic) IBOutlet UIButton *sendButton;
 @property (strong, nonatomic) IBOutlet UISlider *amplitude;
 @property (strong, nonatomic) IBOutlet UITextField *bit0;
