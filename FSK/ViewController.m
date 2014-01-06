@@ -128,6 +128,7 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
 	}else{
         status = 1;
         qIndex = 0;
+        int repeatTimes = [[[self repeatTimes] text] intValue];
         float amplitude = [[self amplitude] value];
         float phaseShiftInPi = [[[self phaseShiftInPi] text] floatValue];
         const char* bit0 = [[[self bit0] text] UTF8String];
@@ -161,7 +162,13 @@ unsigned long calcBitSteps(const char* bit, int lowSteps, int highSteps){
         getBitData(bit1, bit1Data, lowData, lowSteps, highData, highSteps);
         
         NSStringEncoding gbk = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
-        const char* datac = [[[self data] text] cStringUsingEncoding:gbk];
+        NSString* data = [[self data] text];
+        NSString* repeatedData = @"";
+        for (int i=0; i<repeatTimes; ++i) {
+            repeatedData = [repeatedData stringByAppendingString:data];
+            //NSLog(@"%@", repeatedData);
+        }
+        const char* datac = [repeatedData cStringUsingEncoding:gbk];
         //const char* datac = [data UTF8String];
         
         unsigned long dataLengthc = strlen(datac)*8;
@@ -265,7 +272,7 @@ OSStatus RenderTone(
 	{
         if(viewController->status){
             buffer[frame] = *(viewController->opDq);
-            //printf("qIndex:%lu, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
+            printf("qIndex:%lu, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
             ++viewController->opDq;
             if(++viewController->qIndex >= viewController->qSteps){
                 //printf("qIndex end:%lu qSteps:%lu\n", viewController->qIndex, viewController->qSteps);

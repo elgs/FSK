@@ -30,6 +30,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *amplitudeValue;
 @property (strong, nonatomic) IBOutlet UITextField *interval;
 @property (strong, nonatomic) IBOutlet UITextField *phaseShiftInPi;
+@property (strong, nonatomic) IBOutlet UITextField *repeatTimes;
 
 - (IBAction)sendData:(id)sender;
 - (IBAction)amplitudeChanged:(id)sender;

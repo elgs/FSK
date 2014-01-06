@@ -83,8 +83,12 @@
                                 <textInputTraits key="textInputTraits" returnKeyType="done"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t6o-Ct-HTz">
-                                <rect key="frame" x="20" y="518" width="280" height="30"/>
+                                <rect key="frame" x="171" y="518" width="129" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="129" id="CBz-ei-zTd"/>
+                                    <constraint firstAttribute="height" constant="30" id="e6z-wo-4eg"/>
+                                </constraints>
                                 <state key="normal" title="Send">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -100,7 +104,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1000" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wMW-g7-xrV">
-                                <rect key="frame" x="114" y="362" width="186" height="30"/>
+                                <rect key="frame" x="114" y="395" width="186" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -118,14 +122,18 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Interval (ms)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jFe-0d-ds5">
-                                <rect key="frame" x="20" y="366" width="79" height="21"/>
+                                <rect key="frame" x="20" y="399" width="79" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tVG-4m-fWg">
-                                <rect key="frame" x="20" y="480" width="280" height="30"/>
+                                <rect key="frame" x="20" y="518" width="151" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="2S9-KT-uY1"/>
+                                    <constraint firstAttribute="width" constant="151" id="5WX-Cr-big"/>
+                                </constraints>
                                 <state key="normal" title="Info">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -169,15 +177,26 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nSk-7D-9c0">
+                                <rect key="frame" x="114" y="362" width="186" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Repeat times" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PSl-fC-PGk">
+                                <rect key="frame" x="20" y="366" width="86" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="t6o-Ct-HTz" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="0G5-uA-mtp"/>
-                            <constraint firstItem="8wH-16-oqX" firstAttribute="top" secondItem="t6o-Ct-HTz" secondAttribute="bottom" constant="20" id="KAG-ad-OHX"/>
-                            <constraint firstAttribute="trailing" secondItem="t6o-Ct-HTz" secondAttribute="trailing" constant="20" id="ZZf-G9-nUl"/>
-                            <constraint firstItem="tVG-4m-fWg" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="tJe-eZ-Ewe"/>
-                            <constraint firstAttribute="trailing" secondItem="tVG-4m-fWg" secondAttribute="trailing" constant="20" id="ufk-14-i67"/>
-                            <constraint firstItem="t6o-Ct-HTz" firstAttribute="top" secondItem="tVG-4m-fWg" secondAttribute="bottom" constant="8" id="z2B-da-zgL"/>
+                            <constraint firstItem="8wH-16-oqX" firstAttribute="top" secondItem="t6o-Ct-HTz" secondAttribute="bottom" constant="20" id="C6J-qE-5HF"/>
+                            <constraint firstItem="8wH-16-oqX" firstAttribute="top" secondItem="tVG-4m-fWg" secondAttribute="bottom" constant="20" id="W4T-xS-kOB"/>
+                            <constraint firstItem="t6o-Ct-HTz" firstAttribute="leading" secondItem="tVG-4m-fWg" secondAttribute="trailing" id="evt-8O-aeH"/>
+                            <constraint firstAttribute="trailing" secondItem="t6o-Ct-HTz" secondAttribute="trailing" constant="20" id="mox-Vp-XKd"/>
+                            <constraint firstItem="tVG-4m-fWg" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="tNd-I0-tIU"/>
                         </constraints>
                     </view>
                     <connections>
@@ -191,6 +210,7 @@
                         <outlet property="interval" destination="wMW-g7-xrV" id="vGR-kD-mM9"/>
                         <outlet property="lowFreq" destination="MaF-qs-VaW" id="C0K-JQ-Ral"/>
                         <outlet property="phaseShiftInPi" destination="mX7-fc-eyb" id="M9k-gN-HC1"/>
+                        <outlet property="repeatTimes" destination="nSk-7D-9c0" id="z86-lw-TWy"/>
                         <outlet property="sendButton" destination="t6o-Ct-HTz" id="fTG-5t-Hwb"/>
                         <outlet property="tailing" destination="QjH-Ye-FjD" id="bra-NT-ivl"/>
                     </connections>
