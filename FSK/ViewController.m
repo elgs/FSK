@@ -272,7 +272,7 @@ OSStatus RenderTone(
 	{
         if(viewController->status){
             buffer[frame] = *(viewController->opDq);
-            printf("qIndex:%lu, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
+            //printf("qIndex:%lu, frame:%d, value:%f\n", viewController->qIndex, (unsigned int)frame, *(viewController->opDq));
             ++viewController->opDq;
             if(++viewController->qIndex >= viewController->qSteps){
                 //printf("qIndex end:%lu qSteps:%lu\n", viewController->qIndex, viewController->qSteps);
